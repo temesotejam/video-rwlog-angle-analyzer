@@ -2,191 +2,111 @@
 
 このWeb版は、既存Python解析を基準実装として数値処理を移植しています。
 
-## 2026-08-17 実測セット1
+現在の主時刻同期は **START / END の2点線形同期**です。MID1〜MID6は主同期には使わず、START/END同期からの途中残差を確認する診断信号として扱います。8点piecewiseは詳細診断用です。
 
-検証入力:
+MID探索許容は固定実験プロトコルに合わせて `±0.40 s` を既定値としています。
 
-- `WIN_20260817_11_39_56_Pro.mp4`
-- `dynamic_beta_holdcompare_zerocross_run_4_1307074020.rwlog`
+## 実測セット1
 
-### MP4 parser
+- Video: `WIN_20260817_11_39_56_Pro.mp4`
+- RWLOG: `dynamic_beta_holdcompare_zerocross_run_4_1307074020.rwlog`
+- RWLOG: v35 / 1884 samples / CRC OK
+- Video: 1280x720 / 1402 frames / 30.4668248 fps
+- Measurement white-marker tracking: `914 / 914` valid
 
-Web版のISO-BMFF parserで以下を取得し、ffprobeで確認した値と一致することを確認しました。
+### START / END primary synchronization
 
-- codec: `avc1.4D001F`
-- resolution: `1280 x 720`
-- frames: `1402`
-- fps: `30.466824771571254`
+- scale: `0.9996292502773817`
+- video offset [s]: `9.431049215406562`
+- MID residual [ms]: `[-30.518, -24.636, -10.923, -20.036, -36.147, -0.442]`
+- MID residual RMSE: `23.6848455 ms`
+- MID max abs residual: `36.1466930 ms`
 
-### RWLOG parser
+MID correlations:
 
-- format: v35
-- samples: 1884
-- CRC: OK
-- synchronization anchors [s]:
-  - 0.000
-  - 2.515
-  - 7.500
-  - 12.510
-  - 17.510
-  - 22.517
-  - 27.505
-  - 30.000
+- `0.9553, 0.9170, 0.9407, 0.9450, 0.8929, 0.9437`
 
-### LED pattern matching
+Representative primary RMSE [deg]:
 
-Python版で生成したwhole-frame brightness seriesをWeb版LED matcherへ入力し、START / MID x6 / ENDの検出フレーム時刻が一致することを確認しました。
+- `pitch_dynamic_turnfast_deg`: `0.4652417`
+- `pitch_dynamic_hold170_deg`: `0.4792505`
+- `pitch_dynamic_hold120_deg`: `0.4934155`
+- `pitch_dynamic_hold073_deg`: `0.5058712`
 
-動画側8 anchors [s]:
+## 実測セット2
 
-- 9.431049215406562
-- 11.914599001426534
-- 16.903632192106514
-- 21.925487969567286
-- 26.914521160247265
-- 31.903554350927248
-- 36.925410128388016
-- 39.41992672372801
+- Video: `WIN_20260817_11_22_32_Pro.mp4`
+- RWLOG: `dynamic_beta_holdcompare_zerocross_run_3_260232308.rwlog`
+- RWLOG: v35 / 1890 samples / CRC OK
+- Measurement white-marker tracking: `901 / 901` valid
 
-また、LED用brightness計算を1280x720から320x180へ縮小しても、この実測動画では8 anchorの検出フレーム時刻が変化しないことを確認しました。Web版では処理負荷を下げるため320px幅でbrightnessを計算します。
+このセットではMID探索許容 `±0.75 s` だとMID5が別の明るさ変化へ誤マッチしました。`±0.40 s` に狭めることで本来のMIDへ戻ることを確認しています。
 
-### 8-point time synchronization / comparison
+### START / END primary synchronization
 
-Python版が出力した動画白丸角度をWeb版比較コアへ入力し、global affine 8-point mapping、piecewise diagnostic mapping、RMSE / MAE / biasを比較しました。
+- scale: `1.000424183006536`
+- video offset [s]: `6.232607843137255`
+- MID residual [ms]: `[-12.475, -15.536, -24.600, -40.667, -29.722, -44.789]`
+- MID residual RMSE: `30.4012610 ms`
+- MID max abs residual: `44.7886183 ms`
 
-Global affine:
+MID correlations:
 
-- scale: `0.9999293412897484`
-- offset [s]: `9.41120797682177`
-- anchor residual RMSE [ms]: `13.2473512213021`
+- `0.8939, 0.9507, 0.9148, 0.8345, 0.6048, 0.8175`
 
-代表RMSE [deg]:
+Representative primary RMSE [deg]:
 
-- `pitch_dynamic_turnfast_deg`: `0.2672722768328`
-- `pitch_dynamic_hold170_deg`: `0.3280629595834`
-- `pitch_dynamic_hold120_deg`: `0.3434282346634`
-- `pitch_dynamic_hold073_deg`: `0.3518781451548`
+- `pitch_dynamic_hold170_deg`: `0.3877501`
+- `pitch_dynamic_turnfast_deg`: `0.3958655`
+- `pitch_dynamic_hold120_deg`: `0.4003071`
+- `pitch_dynamic_hold073_deg`: `0.4154306`
 
-Web版の比較コアは上記Python結果と浮動小数点誤差レベルで一致しました。
+## 実測セット3
 
-## 2026-08-17 実測セット2
+- Video: `WIN_20260817_14_10_51_Pro.mp4`
+- RWLOG: `dynamic_beta_holdcompare_zerocross_run_1_65086276.rwlog`
+- Measurement white-marker tracking: `900 / 900` valid
 
-検証入力:
+### START / END primary synchronization
 
-- `WIN_20260817_11_22_32_Pro.mp4`
-- `dynamic_beta_holdcompare_zerocross_run_3_260232308.rwlog`
+- scale: `0.9998284813197476`
+- video offset [s]: `8.866098204754973`
+- MID residual [ms]: `[-14.671, -4.551, -4.428, -0.306, -5.183, -4.061]`
+- MID residual RMSE: `7.0594097 ms`
+- MID max abs residual: `14.6714221 ms`
 
-このセットでは、MID探索許容を `±0.75 s` とした場合、MID5が期待時刻より約 `0.616 s` 早い別の明るさ変化へ誤マッチしました。固定実験プロトコルではMIDは5秒間隔で発生するため、既定値を **`±0.40 s`** に狭めました。
+MID correlations:
 
-この変更では実測セット1の検出結果は変化せず、セット2ではMID5が本来の点滅へ戻りました。
+- `0.9231, 0.9337, 0.8951, 0.8415, 0.9009, 0.7963`
 
-動画側8 anchors [s]:
+Representative primary RMSE [deg]:
 
-- 6.232607843137255
-- 8.728196078431372
-- 13.725254901960785
-- 18.722313725490196
-- 23.719372549019607
-- 28.716431372549017
-- 33.71349019607843
-- 36.245333333333335
+- `pitch_gyro_bias_corrected_deg`: `0.5726626`
+- `pitch_dynamic_turnfast_deg`: `0.6188110`
+- `pitch_dynamic_hold170_deg`: `0.7281482`
+- `pitch_dynamic_hold120_deg`: `0.7788415`
+- `pitch_dynamic_hold073_deg`: `0.7992402`
 
-RWLOG側8 anchors [s]:
+## Interpretation
 
-- 0.000
-- 2.507
-- 7.505
-- 12.509
-- 17.520
-- 22.504
-- 27.514
-- 30.000
+3セットとも、MIDを主同期から外してもSTART/END間の途中残差は概ね数ms〜数十msの範囲です。MIDは動作中の映像変化を受けるため、この残差を診断として残しつつ、主RMSEの時間軸をMID検出へ依存させない設計にしています。
 
-修正後のglobal affine:
-
-- scale: `0.9998032780643065`
-- offset [s]: `6.220952279859686`
-- anchor residual RMSE [ms]: `14.508665888494118`
-
-白丸追跡:
-
-- measurement window: `901 / 901` frames valid
-- pre-measurement zero reference: `-0.80 .. -0.20 s`
-
-代表RMSE [deg]:
-
-- `pitch_dynamic_turnfast_deg`: `0.2246083727933`
-- `pitch_dynamic_hold170_deg`: `0.2854974525135`
-- `pitch_dynamic_hold120_deg`: `0.2933288610748`
-- `pitch_dynamic_hold073_deg`: `0.2964830736294`
-
-Web版JavaScriptコアへ同じbrightness・白丸角度・RWLOGを入力し、8 anchor、同期残差、RMSE / MAE / biasがPython版と浮動小数点誤差レベルで一致することを確認しました。
-
-## 2026-08-17 実測セット3
-
-検証入力:
-
-- `WIN_20260817_14_10_51_Pro.mp4`
-- `dynamic_beta_holdcompare_zerocross_run_1_65086276.rwlog`
-
-Web版の既定値と同じMID探索許容 `±0.40 s` で再解析しました。このセットでは6個のMID点滅すべてが予定時刻の約5 ms以内に入り、探索幅を `±0.75 s` から狭めても検出点は変化しませんでした。
-
-動画側8 anchors [s]:
-
-- 8.866098204754973
-- 11.364995584667637
-- 16.364260504609412
-- 21.363525424551188
-- 26.362790344492964
-- 31.36205526443474
-- 36.36132018437652
-- 38.8609526443474
-
-MID correlation:
-
-- `0.9231`
-- `0.9337`
-- `0.8951`
-- `0.8415`
-- `0.9009`
-- `0.7963`
-
-Global affine:
-
-- scale: `0.9999840676614352`
-- offset [s]: `8.85961381634563`
-- anchor residual RMSE [ms]: `4.179632030277584`
-
-白丸追跡:
-
-- all processed frames: `1374 / 1374` valid
-- measurement window: `900 / 900` frames valid
-- pre-measurement zero reference: `-0.80 .. -0.20 s`
-
-代表RMSE [deg]:
-
-- `pitch_gyro_bias_corrected_deg`: `0.5636655878606401`
-- `pitch_dynamic_turnfast_deg`: `0.5814961234407264`
-- `pitch_dynamic_hold170_deg`: `0.7067479692733529`
-- `pitch_dynamic_hold120_deg`: `0.7561103858337005`
-- `pitch_dynamic_hold073_deg`: `0.7732626791333362`
-
-このセットではセット1・2より姿勢推定値と動画角度の差が大きい一方、同期残差は3セット中で最小です。したがって、大きめのRMSEは時刻同期失敗によるものではないと判断できます。
+セット2のようにMID候補が不安定になるケースでも、MIDは主同期に使われないため、主比較の時間軸を直接壊しません。
 
 ## Browser runtime status
 
-MP4 container parsing、RWLOG parsing、CRC、LED matching、8-point synchronization、metrics calculationは複数の実測セットで個別に検証済みです。
+GitHub Pagesは `main` / root から公開しています。
 
-GitHub Pagesは `main` / root から公開済みです。ただし、この開発環境ではブラウザUIへローカル実験ファイルを選択させる操作ができないため、WebCodecs `VideoDecoder` を含む**公開ページ上での完全なend-to-end実行**は、利用者側Chrome/Edgeで最終確認します。
+MP4 container parsing、RWLOG parsing、CRC、LED matching、START/END synchronization、MID residual diagnostics、piecewise synchronization、metrics calculationは複数の実測セットで確認済みです。
+
+この開発環境ではブラウザUIへローカル実験ファイルを選択させる操作ができないため、WebCodecs `VideoDecoder` を含む公開ページ上の完全なend-to-end実行は利用者側Chrome/Edgeで最終確認します。
 
 最終確認項目:
 
 1. H.264 MP4の全フレームデコード
-2. START + MID x6 + END の8点同期
-3. 白丸追跡率
-4. 動画角度波形
-5. `dynamic_turnfast`等のRMSE
-6. ページ上の4グラフ表示
+2. START / END主同期
+3. MID1〜MID6残差表示
+4. 白丸追跡率
+5. 動画角度波形
+6. 主RMSEとPiecewise診断の表示
 7. PNG / CSV / JSON / ZIPの保存
-
-Web画面側では、未対応ブラウザの場合は解析開始を無効にします。
