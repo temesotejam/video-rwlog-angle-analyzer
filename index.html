@@ -45,7 +45,7 @@
           <label>開始パターン探索上限 [s]<input id="searchEnd" type="number" value="10" step="0.1"></label>
           <label>MID最初 [s]<input id="midFirst" type="number" value="2.5" step="0.1"></label>
           <label>MID間隔 [s]<input id="midInterval" type="number" value="5.0" step="0.1"></label>
-          <label>MID探索許容 [s]<input id="midTolerance" type="number" value="0.75" step="0.05"></label>
+          <label>MID探索許容 [s]<input id="midTolerance" type="number" value="0.40" step="0.05"></label>
           <label>MID相関閾値<input id="midCorrelation" type="number" value="0.4" step="0.05"></label>
           <label>0°基準開始 [s]<input id="referenceBegin" type="number" value="-0.80" step="0.05"></label>
           <label>0°基準終了 [s]<input id="referenceEnd" type="number" value="-0.20" step="0.05"></label>
@@ -70,7 +70,9 @@
         <div><span class="step">03</span><h2>解析結果</h2></div>
         <button id="downloadZip" class="secondary">解析結果ZIPを保存</button>
       </div>
+
       <div id="summaryCards" class="summary-grid"></div>
+
       <div class="panel graph-panel">
         <div class="tabs" role="tablist">
           <button class="tab active" data-target="compareView">比較グラフ</button>
@@ -78,22 +80,41 @@
           <button class="tab" data-target="syncView">LED同期</button>
           <button class="tab" data-target="piecewiseView">Piecewise診断</button>
         </div>
-        <div class="tab-view active" id="compareView"><div class="canvas-wrap"><canvas id="compareCanvas"></canvas></div><button class="download-plot" data-canvas="compareCanvas" data-name="video_rwlog_angle_comparison.png">PNG保存</button></div>
-        <div class="tab-view" id="angleView"><div class="canvas-wrap"><canvas id="angleCanvas"></canvas></div><button class="download-plot" data-canvas="angleCanvas" data-name="video_white_angle_timeseries.png">PNG保存</button></div>
-        <div class="tab-view" id="syncView"><div class="canvas-wrap"><canvas id="syncCanvas"></canvas></div><button class="download-plot" data-canvas="syncCanvas" data-name="whole_frame_led_sync_timeseries.png">PNG保存</button></div>
-        <div class="tab-view" id="piecewiseView"><div class="canvas-wrap"><canvas id="piecewiseCanvas"></canvas></div><button class="download-plot" data-canvas="piecewiseCanvas" data-name="video_rwlog_angle_comparison_piecewise.png">PNG保存</button></div>
+        <div class="tab-view active" id="compareView">
+          <div class="canvas-wrap"><canvas id="compareCanvas"></canvas></div>
+          <button class="download-plot" data-canvas="compareCanvas" data-name="video_rwlog_angle_comparison.png">PNG保存</button>
+        </div>
+        <div class="tab-view" id="angleView">
+          <div class="canvas-wrap"><canvas id="angleCanvas"></canvas></div>
+          <button class="download-plot" data-canvas="angleCanvas" data-name="video_white_angle_timeseries.png">PNG保存</button>
+        </div>
+        <div class="tab-view" id="syncView">
+          <div class="canvas-wrap"><canvas id="syncCanvas"></canvas></div>
+          <button class="download-plot" data-canvas="syncCanvas" data-name="whole_frame_led_sync_timeseries.png">PNG保存</button>
+        </div>
+        <div class="tab-view" id="piecewiseView">
+          <div class="canvas-wrap"><canvas id="piecewiseCanvas"></canvas></div>
+          <button class="download-plot" data-canvas="piecewiseCanvas" data-name="video_rwlog_angle_comparison_piecewise.png">PNG保存</button>
+        </div>
       </div>
+
       <div class="panel">
         <div class="panel-head"><div><h2>推定器別の誤差</h2></div></div>
         <div class="table-scroll"><table id="metricsTable"><thead><tr><th>系列</th><th>RMSE [deg]</th><th>MAE [deg]</th><th>Bias [deg]</th><th>samples</th></tr></thead><tbody></tbody></table></div>
       </div>
+
       <div class="panel">
         <div class="panel-head"><div><h2>出力ファイル</h2></div></div>
         <div id="fileDownloads" class="download-grid"></div>
       </div>
     </section>
-    <section id="errorPanel" class="panel error-panel hidden"><h2>解析を完了できませんでした</h2><pre id="errorText"></pre></section>
+
+    <section id="errorPanel" class="panel error-panel hidden">
+      <h2>解析を完了できませんでした</h2>
+      <pre id="errorText"></pre>
+    </section>
   </main>
+
   <footer>video-rwlog-angle-analyzer · browser-local research tool</footer>
   <script type="module" src="./src/app.js"></script>
 </body>
