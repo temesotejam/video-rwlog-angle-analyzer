@@ -50,9 +50,7 @@
 
 主結果は8点すべてに対する **global affine fit** です。8点を必ず通る piecewise linear 結果も診断用として同時に出力します。
 
-## 出力
-
-ページ上に以下を表示します。
+## ページ上で確認できるもの
 
 - Video vs RWLOG 比較グラフ
 - 動画白丸角度グラフ
@@ -63,7 +61,7 @@
 - 白丸追跡率
 - RWLOG CRC
 
-解析結果ZIPには概ね以下が入ります。
+## 解析結果ZIP
 
 ```text
 led_sync/
@@ -112,11 +110,9 @@ python -m http.server 8000
 
 その後 `http://localhost:8000/` をChrome/Edgeで開きます。
 
-## Python基準実装
+## Python基準実装との一致確認
 
-`python-reference/` に、Web版の元になったPython解析ツールを保存しています。
-
-Web移植では次の数値処理を基準実装と一致させています。
+Web移植では、今回使用している最新Python解析ツールを基準として次の数値処理を一致させています。
 
 - LED pattern matching
 - RWLOG v34/v35 binary parsing
@@ -126,7 +122,7 @@ Web移植では次の数値処理を基準実装と一致させています。
 - t=0 zero reference
 - RMSE / MAE / Bias
 
-今回の実データについて、既存Python版が生成した動画角度・LED同期結果をWeb側の比較計算へ入力したテストでは、RMSEと8点同期パラメータが浮動小数点誤差レベルで一致しています。
+実測セットを使った検証値と、現時点のend-to-end確認状況は [`VALIDATION.md`](./VALIDATION.md) に記録しています。
 
 ## 構成
 
@@ -141,7 +137,7 @@ src/
   plot.js         Canvas graph rendering
   export.js       CSV / JSON / download helpers
   zip.js          dependency-free ZIP writer
-python-reference/ Python基準実装
+VALIDATION.md      実測データとの数値一致確認
 ```
 
 外部CDNやJavaScriptライブラリには依存していません。
