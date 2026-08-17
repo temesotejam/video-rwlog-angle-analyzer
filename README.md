@@ -59,6 +59,7 @@ MID探索許容の既定値は固定実験プロトコルに合わせて **±0.4
 ## ページ上で確認できるもの
 
 - START/END同期による Video vs RWLOG 比較グラフ
+- **時系列ビュー**：動画角度・姿勢角・誤差・モータ電流・IMU・Beta・試験状態などから任意の系列を選び、共通時間軸・独立縦軸で縦に並べて表示
 - 動画白丸角度グラフ
 - LED同期グラフ
 - MID1〜MID6の相関・START/END同期からの残差
@@ -67,6 +68,19 @@ MID探索許容の既定値は固定実験プロトコルに合わせて **±0.4
 - MID残差RMSE
 - 白丸追跡率
 - RWLOG CRC
+
+## 時系列ビュー
+
+解析後の **「時系列ビュー」** では、1つの動画＋RWLOGセットから得られた数値系列を任意に選択できます。
+
+- 横軸：全グラフで同じ `0 s ～ 測定終了`
+- 縦軸：系列ごとに独立して自動スケーリング
+- 2系列以上を縦に並べて比較可能（1系列だけでも表示可能）
+- 系列名検索、主要系列の一括選択、個別PNG保存に対応
+- `pitch_*_deg` は動画比較と同じ `t=0` 基準後の値を表示
+- `pitch_*` の動画との差（error）、モータ指令・実電流、IMU、Beta、試験状態なども選択可能
+
+RWLOG v34/v35の測定区間の数値系列は `rwlog/timeseries.csv` にも保存します。
 
 ## 解析結果ZIP
 
@@ -83,6 +97,7 @@ angle/
 rwlog/
   header.json
   metadata.json
+  timeseries.csv
 comparison/
   video_rwlog_aligned.csv
   video_rwlog_aligned_piecewise.csv
@@ -137,6 +152,7 @@ src/
   mp4.js          MP4 parser + WebCodecs decoder
   rwlog.js        RWLOG v34/v35 parser + CRC
   analysis.js     LED / marker / synchronization / metrics
+  timeseries.js   selectable time-series catalog
   plot.js         Canvas graph rendering
   export.js       CSV / JSON / download helpers
   zip.js          dependency-free ZIP writer
