@@ -76,6 +76,7 @@
       <div class="panel graph-panel">
         <div class="tabs" role="tablist">
           <button class="tab active" data-target="compareView">比較グラフ</button>
+          <button class="tab" data-target="timeseriesView">時系列ビュー</button>
           <button class="tab" data-target="angleView">動画角度</button>
           <button class="tab" data-target="syncView">LED同期</button>
           <button class="tab" data-target="piecewiseView">Piecewise診断</button>
@@ -83,6 +84,25 @@
         <div class="tab-view active" id="compareView">
           <div class="canvas-wrap"><canvas id="compareCanvas"></canvas></div>
           <button class="download-plot" data-canvas="compareCanvas" data-name="video_rwlog_angle_comparison.png">PNG保存</button>
+        </div>
+        <div class="tab-view" id="timeseriesView">
+          <div class="timeseries-toolbar">
+            <div class="timeseries-toolbar-head">
+              <div>
+                <h3>任意の時系列を縦に並べて比較</h3>
+                <p>横軸は全グラフで同じ測定時間、縦軸は系列ごとに独立して自動調整します。</p>
+              </div>
+              <span class="series-count">選択 <strong id="selectedSeriesCount">0</strong> 系列</span>
+            </div>
+            <div class="timeseries-actions">
+              <input id="seriesSearch" type="search" placeholder="系列名を検索（例: beta, current, gyro）" />
+              <button id="selectRecommendedSeries" class="secondary" type="button">主要系列を選択</button>
+              <button id="clearSeries" class="secondary" type="button">すべて解除</button>
+            </div>
+            <div id="seriesOptions" class="series-options"></div>
+          </div>
+          <div id="seriesEmpty" class="series-empty">表示したい系列を2つ以上選ぶと、同じ時間軸で縦に並べて確認できます。1系列だけの表示も可能です。</div>
+          <div id="stackedCharts" class="stacked-charts"></div>
         </div>
         <div class="tab-view" id="angleView">
           <div class="canvas-wrap"><canvas id="angleCanvas"></canvas></div>
