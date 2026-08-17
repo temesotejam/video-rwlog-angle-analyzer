@@ -2,7 +2,7 @@
 
 このWeb版は、既存Python解析を基準実装として数値処理を移植しています。
 
-## 2026-08-17 実測セット
+## 2026-08-17 実測セット1
 
 検証入力:
 
@@ -69,19 +69,73 @@ Global affine:
 
 Web版の比較コアは上記Python結果と浮動小数点誤差レベルで一致しました。
 
+## 2026-08-17 実測セット2
+
+検証入力:
+
+- `WIN_20260817_11_22_32_Pro.mp4`
+- `dynamic_beta_holdcompare_zerocross_run_3_260232308.rwlog`
+
+このセットでは、MID探索許容を `±0.75 s` とした場合、MID5が期待時刻より約 `0.616 s` 早い別の明るさ変化へ誤マッチしました。固定実験プロトコルではMIDは5秒間隔で発生するため、既定値を **`±0.40 s`** に狭めました。
+
+この変更では実測セット1の検出結果は変化せず、セット2ではMID5が本来の点滅へ戻りました。
+
+動画側8 anchors [s]:
+
+- 6.232607843137255
+- 8.728196078431372
+- 13.725254901960785
+- 18.722313725490196
+- 23.719372549019607
+- 28.716431372549017
+- 33.71349019607843
+- 36.245333333333335
+
+RWLOG側8 anchors [s]:
+
+- 0.000
+- 2.507
+- 7.505
+- 12.509
+- 17.520
+- 22.504
+- 27.514
+- 30.000
+
+修正後のglobal affine:
+
+- scale: `0.9998032780643065`
+- offset [s]: `6.220952279859686`
+- anchor residual RMSE [ms]: `14.508665888494118`
+
+白丸追跡:
+
+- measurement window: `901 / 901` frames valid
+- pre-measurement zero reference: `-0.80 .. -0.20 s`
+
+代表RMSE [deg]:
+
+- `pitch_dynamic_turnfast_deg`: `0.2246083727933`
+- `pitch_dynamic_hold170_deg`: `0.2854974525135`
+- `pitch_dynamic_hold120_deg`: `0.2933288610748`
+- `pitch_dynamic_hold073_deg`: `0.2964830736294`
+
+Web版JavaScriptコアへ同じbrightness・白丸角度・RWLOGを入力し、8 anchor、同期残差、RMSE / MAE / biasがPython版と浮動小数点誤差レベルで一致することを確認しました。
+
 ## Browser runtime status
 
-MP4 container parsing、RWLOG parsing、CRC、LED matching、8-point synchronization、metrics calculationは個別に検証済みです。
+MP4 container parsing、RWLOG parsing、CRC、LED matching、8-point synchronization、metrics calculationは複数の実測セットで個別に検証済みです。
 
-この開発環境ではローカルChromiumへの`file:` / local HTTP navigationが管理ポリシーで制限されており、WebCodecs `VideoDecoder` を含む**GitHub Pages上での完全なend-to-end実行**までは自動確認できていません。
+GitHub Pagesは `main` / root から公開済みです。ただし、この開発環境ではブラウザUIへローカル実験ファイルを選択させる操作ができないため、WebCodecs `VideoDecoder` を含む**公開ページ上での完全なend-to-end実行**は、利用者側Chrome/Edgeで最終確認します。
 
-そのため、GitHub Pages公開後にChromeまたはEdgeで上記実測セットを使い、以下を最終確認します。
+最終確認項目:
 
 1. H.264 MP4の全フレームデコード
-2. 8個のLED同期時刻
+2. START + MID x6 + END の8点同期
 3. 白丸追跡率
 4. 動画角度波形
 5. `dynamic_turnfast`等のRMSE
-6. PNG / CSV / JSON / ZIPの保存
+6. ページ上の4グラフ表示
+7. PNG / CSV / JSON / ZIPの保存
 
 Web画面側では、未対応ブラウザの場合は解析開始を無効にします。
