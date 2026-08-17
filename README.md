@@ -21,7 +21,7 @@
 - START LED pattern → 実験開始 → MID blink x6 → END LED pattern
 - RWLOG v34 / v35
 
-動画デコードにはブラウザ標準の WebCodecs API を使います。現時点では最新の Chrome / Edge を推奨します。
+動画デコードにはブラウザ標準の WebCodecs API を使います。最新の Chrome / Edge を推奨します。
 
 ## 解析仕様
 
@@ -37,27 +37,34 @@
 
 ### 時刻同期
 
-同期アンカーは次の8点です。
+主結果の時間軸は **STARTとENDの2点だけ**で決めます。
 
-1. START / experiment t=0
-2. MID1
-3. MID2
-4. MID3
-5. MID4
-6. MID5
-7. MID6
-8. END
+```text
+START ================================= END
+        primary linear synchronization
+```
 
-主結果は8点すべてに対する **global affine fit** です。8点を必ず通る piecewise linear 結果も診断用として同時に出力します。
+動作中のMID1〜MID6は機体運動やモーションブラーの影響を受けるため、**主同期には使用しません**。START/ENDから予測される時刻との差を残差として計算し、途中でも同期が大きく崩れていないかを確認する診断信号として使います。
+
+```text
+START -------- MID1 MID2 MID3 MID4 MID5 MID6 -------- END
+  |              diagnostic residual check only          |
+  +---------------- primary START/END map ----------------+
+```
+
+8点をすべて通る piecewise linear 結果も詳細診断用として残しますが、主RMSEには使用しません。
+
+MID探索許容の既定値は固定実験プロトコルに合わせて **±0.40 s** です。
 
 ## ページ上で確認できるもの
 
-- Video vs RWLOG 比較グラフ
+- START/END同期による Video vs RWLOG 比較グラフ
 - 動画白丸角度グラフ
 - LED同期グラフ
+- MID1〜MID6の相関・START/END同期からの残差
 - Piecewise診断グラフ
 - RMSE / MAE / Bias
-- 8点同期残差RMSE
+- MID残差RMSE
 - 白丸追跡率
 - RWLOG CRC
 
@@ -68,6 +75,7 @@ led_sync/
   whole_frame_brightness.csv
   whole_frame_led_sync_summary.json
   whole_frame_led_sync_timeseries.png
+  mid_sync_diagnostics.csv
 angle/
   video_white_line_tracking.csv
   video_white_angle_summary.json
@@ -84,17 +92,11 @@ comparison/
 web_analysis_summary.json
 ```
 
-## GitHub Pagesを有効にする
+`comparison/video_rwlog_aligned.csv` とページ上の主RMSEはSTART/END同期です。`video_rwlog_aligned_piecewise.csv` は診断用です。
 
-このリポジトリはビルド不要の静的サイトです。
+## 公開ページ
 
-1. GitHubのリポジトリで **Settings** を開く
-2. **Pages** を開く
-3. **Build and deployment** → Source を **Deploy from a branch** にする
-4. Branch を **main**、Folder を **/(root)** にする
-5. Save
-
-公開後のURLは通常次の形です。
+GitHub Pagesは `main` / `/(root)` から公開します。
 
 ```text
 https://temesotejam.github.io/video-rwlog-angle-analyzer/
@@ -110,19 +112,20 @@ python -m http.server 8000
 
 その後 `http://localhost:8000/` をChrome/Edgeで開きます。
 
-## Python基準実装との一致確認
+## 数値検証
 
-Web移植では、今回使用している最新Python解析ツールを基準として次の数値処理を一致させています。
+Web移植では、今回使用しているPython解析ツールを基準として次の数値処理を照合しています。
 
 - LED pattern matching
 - RWLOG v34/v35 binary parsing
 - RWLOG CRC32
-- 8-point global affine synchronization
+- START/END affine synchronization
+- MID residual diagnostics
 - piecewise diagnostic synchronization
 - t=0 zero reference
 - RMSE / MAE / Bias
 
-実測セットを使った検証値と、現時点のend-to-end確認状況は [`VALIDATION.md`](./VALIDATION.md) に記録しています。
+複数の実測セットでの検証値は [`VALIDATION.md`](./VALIDATION.md) に記録しています。
 
 ## 構成
 
