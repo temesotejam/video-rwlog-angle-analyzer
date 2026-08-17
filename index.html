@@ -46,7 +46,7 @@
           <label>MID最初 [s]<input id="midFirst" type="number" value="2.5" step="0.1"></label>
           <label>MID間隔 [s]<input id="midInterval" type="number" value="5.0" step="0.1"></label>
           <label>MID探索許容 [s]<input id="midTolerance" type="number" value="0.40" step="0.05"></label>
-          <label>MID相関閾値<input id="midCorrelation" type="number" value="0.4" step="0.05"></label>
+          <label>MID相関目安（診断）<input id="midCorrelation" type="number" value="0.4" step="0.05"></label>
           <label>0°基準開始 [s]<input id="referenceBegin" type="number" value="-0.80" step="0.05"></label>
           <label>0°基準終了 [s]<input id="referenceEnd" type="number" value="-0.20" step="0.05"></label>
           <label>白丸探索領域 X<input id="searchX" type="number" value="300" step="1"></label>
@@ -91,6 +91,8 @@
         <div class="tab-view" id="syncView">
           <div class="canvas-wrap"><canvas id="syncCanvas"></canvas></div>
           <button class="download-plot" data-canvas="syncCanvas" data-name="whole_frame_led_sync_timeseries.png">PNG保存</button>
+          <p class="progress-text">MID1〜MID6は主同期には使わず、START/END同期に対する途中の残差確認だけに使います。</p>
+          <div class="table-scroll"><table id="midDiagnosticsTable"><thead><tr><th>MID</th><th>相関</th><th>残差 [ms]</th><th>判定</th></tr></thead><tbody></tbody></table></div>
         </div>
         <div class="tab-view" id="piecewiseView">
           <div class="canvas-wrap"><canvas id="piecewiseCanvas"></canvas></div>
