@@ -122,6 +122,57 @@ RWLOG側8 anchors [s]:
 
 Web版JavaScriptコアへ同じbrightness・白丸角度・RWLOGを入力し、8 anchor、同期残差、RMSE / MAE / biasがPython版と浮動小数点誤差レベルで一致することを確認しました。
 
+## 2026-08-17 実測セット3
+
+検証入力:
+
+- `WIN_20260817_14_10_51_Pro.mp4`
+- `dynamic_beta_holdcompare_zerocross_run_1_65086276.rwlog`
+
+Web版の既定値と同じMID探索許容 `±0.40 s` で再解析しました。このセットでは6個のMID点滅すべてが予定時刻の約5 ms以内に入り、探索幅を `±0.75 s` から狭めても検出点は変化しませんでした。
+
+動画側8 anchors [s]:
+
+- 8.866098204754973
+- 11.364995584667637
+- 16.364260504609412
+- 21.363525424551188
+- 26.362790344492964
+- 31.36205526443474
+- 36.36132018437652
+- 38.8609526443474
+
+MID correlation:
+
+- `0.9231`
+- `0.9337`
+- `0.8951`
+- `0.8415`
+- `0.9009`
+- `0.7963`
+
+Global affine:
+
+- scale: `0.9999840676614352`
+- offset [s]: `8.85961381634563`
+- anchor residual RMSE [ms]: `4.179632030277584`
+
+白丸追跡:
+
+- all processed frames: `1374 / 1374` valid
+- measurement window: `900 / 900` frames valid
+- pre-measurement zero reference: `-0.80 .. -0.20 s`
+
+代表RMSE [deg]:
+
+- `pitch_gyro_bias_corrected_deg`: `0.5636655878606401`
+- `pitch_dynamic_turnfast_deg`: `0.5814961234407264`
+- `pitch_dynamic_hold170_deg`: `0.7067479692733529`
+- `pitch_dynamic_hold120_deg`: `0.7561103858337005`
+- `pitch_dynamic_hold073_deg`: `0.7732626791333362`
+
+このセットではセット1・2より姿勢推定値と動画角度の差が大きい一方、同期残差は3セット中で最小です。したがって、大きめのRMSEは時刻同期失敗によるものではないと判断できます。
+
 ## Browser runtime status
 
 MP4 container parsing、RWLOG parsing、CRC、LED matching、8-point synchronization、metrics calculationは複数の実測セットで個別に検証済みです。
